@@ -11,7 +11,7 @@ dependencies:
   collection: ^1.17.0
   dio: ^5.1.1
   equatable: ^2.0.5
-  firebase_auth: ^4.3.0
+  firebase_auth: ^4.4.2
   firebase_core: ^2.8.0
   flutter:
     sdk: flutter
