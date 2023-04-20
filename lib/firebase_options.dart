@@ -70,8 +70,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '156103685351',
     projectId: 'e-commerce-cd334',
     storageBucket: 'e-commerce-cd334.appspot.com',
-    androidClientId: '156103685351-7k74j4c6qqtj6ule63d61ak75md87an1.apps.googleusercontent.com',
-    iosClientId: '156103685351-091e1i59hcq9inmp6rsktc77g9n1of4c.apps.googleusercontent.com',
+    androidClientId:
+        '156103685351-7k74j4c6qqtj6ule63d61ak75md87an1.apps.googleusercontent.com',
+    iosClientId:
+        '156103685351-091e1i59hcq9inmp6rsktc77g9n1of4c.apps.googleusercontent.com',
     iosBundleId: 'com.exmaple.verygoodcore.ecommerce-app',
   );
 }
