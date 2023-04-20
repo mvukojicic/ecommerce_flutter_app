@@ -27,7 +27,7 @@ dependencies:
   intl: ^0.17.0
   openapi:
     git:
-      url: git@github.com:mvukojicic/ecommerce_flutter_api.git
+      url: https://github.com/mvukojicic/ecommerce_flutter_api
       #ref: main
   openapi_generator: ^4.0.0
 
