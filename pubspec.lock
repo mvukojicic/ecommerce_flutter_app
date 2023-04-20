@@ -544,9 +544,11 @@ packages:
   openapi:
     dependency: "direct main"
     description:
-      path: "../ecommerce_api"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: f625a9d1a14bf2179565b352559290590e86bd88
+      url: "git@github.com:mvukojicic/ecommerce_flutter_api.git"
+    source: git
     version: "1.0.0"
   openapi_generator:
     dependency: "direct main"

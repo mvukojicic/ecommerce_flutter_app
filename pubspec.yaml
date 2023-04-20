@@ -26,7 +26,9 @@ dependencies:
   google_sign_in: ^6.0.2
   intl: ^0.17.0
   openapi:
-    path: /Users/mihailovukojicic/Practice_Projects/flutter_projects/ecommerce/ecommerce_api
+    git:
+      url: git@github.com:mvukojicic/ecommerce_flutter_api.git
+      #ref: main
   openapi_generator: ^4.0.0
 
 dev_dependencies:
