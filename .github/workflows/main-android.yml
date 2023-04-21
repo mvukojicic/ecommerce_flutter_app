@@ -1,0 +1,90 @@
+name: Android Build & Code Signing
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout the project
+        uses: actions/checkout@v2
+      - name: Setup SSH
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.2.0
+        with:
+          ssh-host: github.com
+          ssh-private-key: ${{ secrets.FLUTTER_API_KEY }}
+      - name: Set Staging Vars
+        run: |
+          echo "APPSTORE_GROUP=DEV" >> $GITHUB_ENV 
+          echo "FLUTTER_FLAVOR=staging" >> $GITHUB_ENV
+        if: startsWith(github.ref, 'refs/tags/production-') != true
+      - name: Set Prod Vars
+        run: |
+          echo "APPSTORE_GROUP=PRODUCTION" >> $GITHUB_ENV
+          echo "FLUTTER_FLAVOR=production" >> $GITHUB_ENV
+        if: startsWith(github.ref, 'refs/tags/production-')
+
+      - name: Flutter action
+        uses: subosito/flutter-action@v1.5.3
+        with:
+          flutter-version: "3.7.3"
+          channel: "stable"
+          cache: true
+
+      - name: Create the Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          # import keystore from secrets
+          echo $KEYSTORE_BASE64 | base64 -d > $RUNNER_TEMP/cashtag_keys
+
+      - name: Fetching Flutter dependencies
+        run: flutter pub get
+      # - name: Add Keystore File
+      #   # id: write_file
+      #   uses: timheuer/base64-to-file@v1.1
+      #   with:
+      #     fileName: 'cashtag_app.keystore'
+      #     fileDir: 'android'
+      #     encodedString: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
+      - name: Building Android application
+        run: flutter build appbundle --target lib/main_${{env.FLUTTER_FLAVOR}}.dart --flavor ${{env.FLUTTER_FLAVOR}} --release
+
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+
+        id: signed_app
+        with:
+          releaseDirectory: build/app/outputs/bundle/${{env.FLUTTER_FLAVOR}}Release
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.ANDROID_KEYSTORE_PASSWORD_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+
+      # Transmit to AppCenter
+      - name: Transmit to AppCenter
+        env:
+          APP_CENTER_TOKEN: ${{ secrets.APP_CENTER_TOKEN }}
+        run: |
+          echo 'Installing App Center CLI tools'
+          npm install -g appcenter-cli
+          echo "Find build artifacts"
+          apkPath=$(find . -name "app*.aab" | head -1)
+          echo "Found apk at $apkPath"
+          if [[ -z ${apkPath} ]]
+          then
+            echo "No apks were found, skip publishing to App Center"
+          else
+            echo "Publishing $apkPath to App Center"
+            appcenter distribute release \
+            --group ${{env.APPSTORE_GROUP}} \
+            --file "${apkPath}" \
+            --release-notes '${{ github.event.head_commit.message }}' \
+            --app Cashtag/cashtag-Android-app \
+            --token "${APP_CENTER_TOKEN}"
+          fi
