@@ -11,6 +11,5 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   locator();
-
   await bootstrap(() => const App());
 }
