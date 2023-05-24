@@ -14,10 +14,20 @@ on:
 
 jobs:
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
-    with:
-      coverage_excludes: "*.dart"
-      flutter_channel: stable
-      test_optimization: false
-      min_coverage: 0
-
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Mica Checkout
+        uses: actions/checkout@v3
+      - name: Mica Flutter Setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "2.10.4"
+          channel: "stable"
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+      - name: Mica Install Dependencies
+        run: flutter pub get
+      - name: Here Mica Check Formatting
+        run: dart format --line-length 80 --set-exit-if-changed lib test
+      - name: And Here Mica Analyze
+        run: flutter analyze ${{inputs.analyze_directories}}
