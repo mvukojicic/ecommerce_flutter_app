@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:ecommerce_app/firebase_options.dart';
 import 'package:ecommerce_app/services/locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
-
-import 'firebase_options.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
