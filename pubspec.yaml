@@ -24,7 +24,7 @@ dependencies:
   get: ^4.6.5
   get_it: ^7.2.0
   google_sign_in: ^6.0.2
-  intl: ^0.17.0
+  intl: ^0.18.0
   openapi:
     git:
       url: https://github.com/mvukojicic/ecommerce_flutter_api
